@@ -62,9 +62,9 @@ class PositionBookControllerTest {
         // When/Then
         mockMvc.perform(get("/api/positions"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.positions").exists())
-                .andExpect(jsonPath("$.positions[0].account").value("ACC1"))
-                .andExpect(jsonPath("$.positions[0].security").value("SEC1"));
+                .andExpect(jsonPath("$.Positions").exists())
+                .andExpect(jsonPath("$.Positions[0].Account").value("ACC1"))
+                .andExpect(jsonPath("$.Positions[0].Security").value("SEC1"));
     }
 
     @Test
