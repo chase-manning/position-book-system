@@ -12,8 +12,8 @@ import jakarta.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class TradeEvent {
     @JsonProperty("ID")
-    @NotBlank
-    private String id;
+    @NotNull
+    private Long id;
     
     @JsonProperty("Account")
     @NotBlank
@@ -30,6 +30,15 @@ public class TradeEvent {
     @JsonProperty("Action")
     @NotNull
     private Action action;
+    
+    public void validate() {
+        if (action == Action.CANCEL && quantity != 0) {
+            throw new IllegalArgumentException("Cancel events must have quantity 0");
+        }
+        if ((action == Action.BUY || action == Action.SELL) && quantity <= 0) {
+            throw new IllegalArgumentException("Buy/Sell events must have positive quantity");
+        }
+    }
     
     public enum Action {
         BUY,
