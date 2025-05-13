@@ -53,13 +53,35 @@ mvn spring-boot:run
       "Quantity": 100,
       "Events": [
         {
-          "ID": "1",
+          "ID": 1,
           "Action": "BUY",
           "Account": "ACC1",
           "Security": "SEC1",
           "Quantity": 100
         }
       ]
+    }
+  ]
+}
+```
+
+### 3. Get Position by Account and Security
+
+- **GET** `/api/positions/{account}/{security}`
+- **Response Example:**
+
+```json
+{
+  "Account": "ACC1",
+  "Security": "SEC1",
+  "Quantity": 100,
+  "Events": [
+    {
+      "ID": 1,
+      "Action": "BUY",
+      "Account": "ACC1",
+      "Security": "SEC1",
+      "Quantity": 100
     }
   ]
 }
