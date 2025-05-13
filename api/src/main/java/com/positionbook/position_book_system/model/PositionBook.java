@@ -9,13 +9,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PositionBook {
     // Key format: "account:security"
     private final Map<String, Position> positions = new ConcurrentHashMap<>();
-    private final Set<String> processedEventIds = ConcurrentHashMap.newKeySet();
+    private final Set<Long> processedEventIds = ConcurrentHashMap.newKeySet(); // For BUY/SELL
+    private final Set<Long> processedCancelIds = ConcurrentHashMap.newKeySet(); // For CANCEL
     
     public void processTradeEvent(TradeEvent event) {
         String key = event.getAccount() + ":" + event.getSecurity();
-        
-        // Validate the event
-        event.validate();
         
         if (event.getAction() == TradeEvent.Action.CANCEL) {
             Position position = positions.get(key);
@@ -32,12 +30,16 @@ public class PositionBook {
                 !originalEvent.getSecurity().equals(event.getSecurity())) {
                 throw new IllegalArgumentException("Cannot cancel event: Account or security mismatch for event ID " + event.getId());
             }
+            // Validate the event (only here for CANCEL)
+            event.validate();
             // Only now, check if this CANCEL event has already been processed
-            if (!processedEventIds.add(event.getId() + "_CANCEL")) {
+            if (!processedCancelIds.add(event.getId())) {
                 throw new IllegalArgumentException("Duplicate CANCEL event for ID: " + event.getId());
             }
             position.cancelTradeEvent(event);
         } else {
+            // Validate the event (only here for BUY/SELL)
+            event.validate();
             // For non-CANCEL actions, block duplicate event IDs
             if (!processedEventIds.add(event.getId())) {
                 throw new IllegalArgumentException("Duplicate event ID: " + event.getId());
