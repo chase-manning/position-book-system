@@ -27,6 +27,9 @@ public class Position {
             this.quantity += event.getQuantity();
         } else if (event.getAction() == TradeEvent.Action.SELL) {
             this.quantity -= event.getQuantity();
+        } else if (event.getAction() == TradeEvent.Action.CANCEL) {
+            cancelTradeEvent(event);
+            return;
         }
         this.events.add(event);
     }
@@ -44,8 +47,8 @@ public class Position {
         } else if (originalEvent.getAction() == TradeEvent.Action.SELL) {
             this.quantity += originalEvent.getQuantity();
         }
-        
-        // Remove the original event from history
-        this.events.remove(originalEvent);
+        // Do NOT remove the original event
+        // Add the cancellation event to history
+        this.events.add(event);
     }
 } 
