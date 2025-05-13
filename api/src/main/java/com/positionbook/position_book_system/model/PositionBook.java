@@ -16,6 +16,8 @@ public class PositionBook {
             Position position = positions.get(key);
             if (position != null) {
                 position.cancelTradeEvent(event);
+            } else {
+                throw new IllegalArgumentException("Trade event not found");
             }
         } else {
             Position position = positions.computeIfAbsent(key, 
