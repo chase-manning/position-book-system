@@ -1,0 +1,22 @@
+# Maven build directory
+/target/
+
+# Maven status files
+**/maven-status/
+
+# Compiled class files
+*.class
+
+# Test reports
+*.txt
+*.xml
+
+# IDE files (optional, but recommended)
+.idea/
+*.iml
+*.log
+*.swp
+.DS_Store
+
+# OS files
+Thumbs.db
