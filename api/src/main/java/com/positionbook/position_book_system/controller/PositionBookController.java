@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import com.positionbook.position_book_system.service.PositionBookService;
 import com.positionbook.position_book_system.dto.TradeEventRequest;
 import com.positionbook.position_book_system.dto.PositionResponse;
+import com.positionbook.position_book_system.model.Position;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import com.positionbook.position_book_system.dto.Position;
 
 @RestController
 @RequestMapping("/api")
