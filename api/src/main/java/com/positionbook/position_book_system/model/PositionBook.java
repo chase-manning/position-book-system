@@ -14,6 +14,9 @@ public class PositionBook {
     public void processTradeEvent(TradeEvent event) {
         String key = event.getAccount() + ":" + event.getSecurity();
         
+        // Validate the event
+        event.validate();
+        
         if (event.getAction() == TradeEvent.Action.CANCEL) {
             Position position = positions.get(key);
             if (position == null) {
