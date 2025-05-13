@@ -38,7 +38,7 @@ class PositionBookControllerTest {
         // Given
         TradeEventRequest request = new TradeEventRequest();
         request.setEvents(List.of(
-            new TradeEvent("1", "ACC1", "SEC1", 100L, TradeEvent.Action.BUY)
+            new TradeEvent(1L, "ACC1", "SEC1", 100L, TradeEvent.Action.BUY)
         ));
 
         // When/Then

@@ -21,8 +21,8 @@ class PositionBookServiceTest {
     void processTradeEvents_ShouldAccumulateQuantities() {
         // Given
         List<TradeEvent> events = Arrays.asList(
-            new TradeEvent("1", "ACC1", "SEC1", 100L, TradeEvent.Action.BUY),
-            new TradeEvent("2", "ACC1", "SEC1", 50L, TradeEvent.Action.BUY)
+            new TradeEvent(1L, "ACC1", "SEC1", 100L, TradeEvent.Action.BUY),
+            new TradeEvent(2L, "ACC1", "SEC1", 50L, TradeEvent.Action.BUY)
         );
 
         // When
@@ -42,8 +42,8 @@ class PositionBookServiceTest {
     void processTradeEvents_ShouldHandleDifferentSecurities() {
         // Given
         List<TradeEvent> events = Arrays.asList(
-            new TradeEvent("1", "ACC1", "SEC1", 100L, TradeEvent.Action.BUY),
-            new TradeEvent("2", "ACC1", "SEC2", 50L, TradeEvent.Action.BUY)
+            new TradeEvent(1L, "ACC1", "SEC1", 100L, TradeEvent.Action.BUY),
+            new TradeEvent(2L, "ACC1", "SEC2", 50L, TradeEvent.Action.BUY)
         );
 
         // When
@@ -58,8 +58,8 @@ class PositionBookServiceTest {
     void processTradeEvents_ShouldHandleBuyAndSell() {
         // Given
         List<TradeEvent> events = Arrays.asList(
-            new TradeEvent("1", "ACC1", "SEC1", 100L, TradeEvent.Action.BUY),
-            new TradeEvent("2", "ACC1", "SEC1", 50L, TradeEvent.Action.SELL)
+            new TradeEvent(1L, "ACC1", "SEC1", 100L, TradeEvent.Action.BUY),
+            new TradeEvent(2L, "ACC1", "SEC1", 50L, TradeEvent.Action.SELL)
         );
 
         // When
@@ -76,8 +76,8 @@ class PositionBookServiceTest {
     void processTradeEvents_ShouldHandleCancellation() {
         // Given
         List<TradeEvent> events = Arrays.asList(
-            new TradeEvent("1", "ACC1", "SEC1", 100L, TradeEvent.Action.BUY),
-            new TradeEvent("1", "ACC1", "SEC1", 0L, TradeEvent.Action.CANCEL)
+            new TradeEvent(1L, "ACC1", "SEC1", 100L, TradeEvent.Action.BUY),
+            new TradeEvent(1L, "ACC1", "SEC1", 0L, TradeEvent.Action.CANCEL)
         );
 
         // When
@@ -95,7 +95,7 @@ class PositionBookServiceTest {
     void getPosition_ShouldReturnCorrectPosition() {
         // Given
         service.processTradeEvents(List.of(
-            new TradeEvent("1", "ACC1", "SEC1", 100L, TradeEvent.Action.BUY)
+            new TradeEvent(1L, "ACC1", "SEC1", 100L, TradeEvent.Action.BUY)
         ));
 
         // When
@@ -111,11 +111,11 @@ class PositionBookServiceTest {
     @Test
     void cancelEventWithMismatchedAccountOrSecurity_ShouldThrow() {
         service.processTradeEvents(List.of(
-            new TradeEvent("1", "ACC1", "SEC1", 100L, TradeEvent.Action.BUY)
+            new TradeEvent(1L, "ACC1", "SEC1", 100L, TradeEvent.Action.BUY)
         ));
         Exception ex = assertThrows(IllegalArgumentException.class, () ->
             service.processTradeEvents(List.of(
-                new TradeEvent("1", "ACC2", "SEC1", 0L, TradeEvent.Action.CANCEL)
+                new TradeEvent(1L, "ACC2", "SEC1", 0L, TradeEvent.Action.CANCEL)
             ))
         );
         String msg = ex.getMessage();
@@ -127,8 +127,8 @@ class PositionBookServiceTest {
     void duplicateEventIds_ShouldThrow() {
         Exception ex = assertThrows(IllegalArgumentException.class, () ->
             service.processTradeEvents(List.of(
-                new TradeEvent("1", "ACC1", "SEC1", 100L, TradeEvent.Action.BUY),
-                new TradeEvent("1", "ACC1", "SEC1", 50L, TradeEvent.Action.BUY)
+                new TradeEvent(1L, "ACC1", "SEC1", 100L, TradeEvent.Action.BUY),
+                new TradeEvent(1L, "ACC1", "SEC1", 50L, TradeEvent.Action.BUY)
             ))
         );
         assertTrue(ex.getMessage().contains("Duplicate event ID"));
@@ -137,21 +137,21 @@ class PositionBookServiceTest {
     @Test
     void cancelEventWithNonZeroQuantity_ShouldThrow() {
         service.processTradeEvents(List.of(
-            new TradeEvent("1", "ACC1", "SEC1", 100L, TradeEvent.Action.BUY)
+            new TradeEvent(1L, "ACC1", "SEC1", 100L, TradeEvent.Action.BUY)
         ));
         Exception ex = assertThrows(IllegalArgumentException.class, () ->
             service.processTradeEvents(List.of(
-                new TradeEvent("1", "ACC1", "SEC1", 50L, TradeEvent.Action.CANCEL)
+                new TradeEvent(1L, "ACC1", "SEC1", 50L, TradeEvent.Action.CANCEL)
             ))
         );
-        assertTrue(ex.getMessage().contains("Cancel event must have quantity 0"));
+        assertEquals("Cancel events must have quantity 0", ex.getMessage());
     }
 
     @Test
     void cancelNonExistentEvent_ShouldThrow() {
         Exception ex = assertThrows(IllegalArgumentException.class, () ->
             service.processTradeEvents(List.of(
-                new TradeEvent("999", "ACC1", "SEC1", 0L, TradeEvent.Action.CANCEL)
+                new TradeEvent(999L, "ACC1", "SEC1", 0L, TradeEvent.Action.CANCEL)
             ))
         );
         String msg = ex.getMessage();
@@ -162,12 +162,12 @@ class PositionBookServiceTest {
     @Test
     void cancelAlreadyCancelledEvent_ShouldThrow() {
         service.processTradeEvents(List.of(
-            new TradeEvent("1", "ACC1", "SEC1", 100L, TradeEvent.Action.BUY),
-            new TradeEvent("1", "ACC1", "SEC1", 0L, TradeEvent.Action.CANCEL)
+            new TradeEvent(1L, "ACC1", "SEC1", 100L, TradeEvent.Action.BUY),
+            new TradeEvent(1L, "ACC1", "SEC1", 0L, TradeEvent.Action.CANCEL)
         ));
         Exception ex = assertThrows(IllegalArgumentException.class, () ->
             service.processTradeEvents(List.of(
-                new TradeEvent("1", "ACC1", "SEC1", 0L, TradeEvent.Action.CANCEL)
+                new TradeEvent(1L, "ACC1", "SEC1", 0L, TradeEvent.Action.CANCEL)
             ))
         );
         assertTrue(ex.getMessage().contains("Duplicate CANCEL event"));
