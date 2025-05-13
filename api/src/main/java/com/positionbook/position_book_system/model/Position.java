@@ -44,15 +44,22 @@ public class Position {
         TradeEvent originalEvent = this.events.stream()
             .filter(e -> e.getId().equals(event.getId()))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Trade event not found"));
+            .orElseThrow(() -> new IllegalArgumentException("Cannot cancel event: Original event not found with ID " + event.getId()));
+            
+        // Validate that the CANCEL event has quantity 0
+        if (event.getQuantity() != 0) {
+            throw new IllegalArgumentException("Cannot cancel event: Cancel event must have quantity 0");
+        }
             
         // Reverse the effect of the original trade
         if (originalEvent.getAction() == TradeEvent.Action.BUY) {
             this.quantity -= originalEvent.getQuantity();
         } else if (originalEvent.getAction() == TradeEvent.Action.SELL) {
             this.quantity += originalEvent.getQuantity();
+        } else {
+            throw new IllegalArgumentException("Cannot cancel event: Original event is already a CANCEL event");
         }
-        // Do NOT remove the original event
+        
         // Add the cancellation event to history
         this.events.add(event);
     }
