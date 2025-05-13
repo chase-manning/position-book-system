@@ -107,4 +107,58 @@ class PositionBookServiceTest {
         assertEquals("SEC1", position.getSecurity());
         assertEquals(100L, position.getQuantity());
     }
+
+    @Test
+    void cancelEventWithMismatchedAccountOrSecurity_ShouldThrow() {
+        service.processTradeEvents(List.of(
+            new TradeEvent("1", "ACC1", "SEC1", 100L, TradeEvent.Action.BUY)
+        ));
+        Exception ex = assertThrows(IllegalArgumentException.class, () ->
+            service.processTradeEvents(List.of(
+                new TradeEvent("1", "ACC2", "SEC1", 0L, TradeEvent.Action.CANCEL)
+            ))
+        );
+        assertTrue(ex.getMessage().contains("Trade event not found"));
+    }
+
+    @Test
+    void duplicateEventIds_ShouldProcessBoth() {
+        service.processTradeEvents(List.of(
+            new TradeEvent("1", "ACC1", "SEC1", 100L, TradeEvent.Action.BUY),
+            new TradeEvent("1", "ACC1", "SEC1", 50L, TradeEvent.Action.BUY)
+        ));
+        Position position = service.getPosition("ACC1", "SEC1");
+        assertEquals(2, position.getEvents().size());
+        assertEquals(150L, position.getQuantity());
+    }
+
+    @Test
+    void negativeOrZeroQuantity_ShouldProcess() {
+        service.processTradeEvents(List.of(
+            new TradeEvent("1", "ACC1", "SEC1", 0L, TradeEvent.Action.BUY),
+            new TradeEvent("2", "ACC1", "SEC1", -10L, TradeEvent.Action.BUY)
+        ));
+        Position position = service.getPosition("ACC1", "SEC1");
+        assertEquals(-10L, position.getQuantity());
+    }
+
+    @Test
+    void sellMoreThanHeld_ShouldAllowNegativePosition() {
+        service.processTradeEvents(List.of(
+            new TradeEvent("1", "ACC1", "SEC1", 10L, TradeEvent.Action.BUY),
+            new TradeEvent("2", "ACC1", "SEC1", 20L, TradeEvent.Action.SELL)
+        ));
+        Position position = service.getPosition("ACC1", "SEC1");
+        assertEquals(-10L, position.getQuantity());
+    }
+
+    @Test
+    void cancelNonExistentEvent_ShouldThrow() {
+        Exception ex = assertThrows(IllegalArgumentException.class, () ->
+            service.processTradeEvents(List.of(
+                new TradeEvent("999", "ACC1", "SEC1", 0L, TradeEvent.Action.CANCEL)
+            ))
+        );
+        assertTrue(ex.getMessage().contains("Trade event not found"));
+    }
 } 
