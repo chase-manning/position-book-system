@@ -78,4 +78,27 @@ class PositionBookControllerTest {
                 .content(invalidJson))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void getPosition_ShouldReturnPosition() throws Exception {
+        // Given
+        Position position = new Position("ACC1", "SEC1");
+        when(positionBookService.getPosition("ACC1", "SEC1")).thenReturn(position);
+
+        // When/Then
+        mockMvc.perform(get("/api/positions/ACC1/SEC1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.Account").value("ACC1"))
+                .andExpect(jsonPath("$.Security").value("SEC1"));
+    }
+
+    @Test
+    void getPosition_ShouldReturnNotFound() throws Exception {
+        // Given
+        when(positionBookService.getPosition("ACC1", "SEC1")).thenReturn(null);
+
+        // When/Then
+        mockMvc.perform(get("/api/positions/ACC1/SEC1"))
+                .andExpect(status().isNotFound());
+    }
 } 

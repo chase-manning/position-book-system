@@ -7,6 +7,7 @@ import com.positionbook.position_book_system.dto.TradeEventRequest;
 import com.positionbook.position_book_system.dto.PositionResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import com.positionbook.position_book_system.dto.Position;
 
 @RestController
 @RequestMapping("/api")
@@ -23,5 +24,16 @@ public class PositionBookController {
     @GetMapping("/positions")
     public ResponseEntity<PositionResponse> getAllPositions() {
         return ResponseEntity.ok(positionBookService.getAllPositions());
+    }
+
+    @GetMapping("/positions/{account}/{security}")
+    public ResponseEntity<Position> getPosition(
+            @PathVariable String account,
+            @PathVariable String security) {
+        Position position = positionBookService.getPosition(account, security);
+        if (position == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(position);
     }
 } 
