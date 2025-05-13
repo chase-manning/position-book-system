@@ -3,6 +3,7 @@ package com.positionbook.position_book_system.model;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,9 +11,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Position {
+    @JsonProperty("Account")
     private String account;
+    @JsonProperty("Security")
     private String security;
+    @JsonProperty("Quantity")
     private Long quantity;
+    @JsonProperty("Events")
     private List<TradeEvent> events;
     
     public Position(String account, String security) {
