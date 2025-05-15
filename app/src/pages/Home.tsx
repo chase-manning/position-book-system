@@ -6,10 +6,18 @@ import "@salt-ds/ag-grid-theme/salt-ag-theme.css";
 import type { ColDef, ICellRendererParams } from "ag-grid-community";
 import type { TradeEvent } from "../app/use-positions";
 import { defaultGridOptions } from "../app/ag-grid-config";
-import { Text, StackLayout, Panel, FlexLayout, Spinner } from "@salt-ds/core";
+import {
+  Text,
+  StackLayout,
+  Panel,
+  FlexLayout,
+  Spinner,
+  StatusIndicator,
+  Button,
+} from "@salt-ds/core";
 
 const Home: FC = () => {
-  const { data: positions, isLoading, error } = usePositions();
+  const { data: positions, isLoading, error, refetch } = usePositions();
 
   const columnDefs: ColDef[] = [
     { field: "Account", headerName: "Account", sortable: true, filter: true },
@@ -75,7 +83,16 @@ const Home: FC = () => {
           justifyContent: "center",
         }}
       >
-        <Text>Error loading positions: {error.message}</Text>
+        <StackLayout gap={2} align="center">
+          <StatusIndicator
+            status="error"
+            size={5}
+            style={{ marginBottom: 8 }}
+          />
+          <Text styleAs="h2">Failed to load positions</Text>
+          <Text>We couldn't load your positions. Please try again.</Text>
+          <Button onClick={() => refetch()}>Retry</Button>
+        </StackLayout>
       </StackLayout>
     );
   }
