@@ -6,7 +6,7 @@ import "@salt-ds/ag-grid-theme/salt-ag-theme.css";
 import type { ColDef, ICellRendererParams } from "ag-grid-community";
 import type { TradeEvent } from "../app/use-positions";
 import { defaultGridOptions } from "../app/ag-grid-config";
-import { Text, StackLayout, Panel, FlexLayout } from "@salt-ds/core";
+import { Text, StackLayout, Panel, FlexLayout, Spinner } from "@salt-ds/core";
 
 const Home: FC = () => {
   const { data: positions, isLoading, error } = usePositions();
@@ -45,11 +45,39 @@ const Home: FC = () => {
   ];
 
   if (isLoading) {
-    return <div>Loading positions...</div>;
+    return (
+      <StackLayout
+        align="center"
+        style={{
+          minHeight: "100vh",
+          width: "100%",
+          background: "var(--salt-container-primary-background)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Spinner size="large" aria-label="Loading positions" role="status" />
+      </StackLayout>
+    );
   }
 
   if (error) {
-    return <div>Error loading positions: {error.message}</div>;
+    return (
+      <StackLayout
+        align="center"
+        style={{
+          minHeight: "100vh",
+          width: "100%",
+          background: "var(--salt-container-primary-background)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Text>Error loading positions: {error.message}</Text>
+      </StackLayout>
+    );
   }
 
   return (
