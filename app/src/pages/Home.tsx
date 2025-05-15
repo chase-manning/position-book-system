@@ -1,8 +1,41 @@
 import type { FC } from "react";
 import { usePositions } from "../app/use-positions";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "@salt-ds/ag-grid-theme/salt-ag-theme.css";
+import type { ColDef, ICellRendererParams } from "ag-grid-community";
+import type { TradeEvent } from "../app/use-positions";
+import { defaultGridOptions } from "../app/ag-grid-config";
 
 const Home: FC = () => {
   const { data: positions, isLoading, error } = usePositions();
+
+  const columnDefs: ColDef[] = [
+    { field: "Account", headerName: "Account", sortable: true, filter: true },
+    { field: "Security", headerName: "Security", sortable: true, filter: true },
+    {
+      field: "Quantity",
+      headerName: "Quantity",
+      sortable: true,
+      filter: true,
+      cellClass: ["numeric-cell"],
+    },
+    {
+      field: "Events",
+      headerName: "Events",
+      cellRenderer: (params: ICellRendererParams<TradeEvent[]>) => {
+        return (
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {params.value?.map((event: TradeEvent) => (
+              <li key={event.ID}>
+                {event.Action} - {event.Quantity}
+              </li>
+            ))}
+          </ul>
+        );
+      },
+    },
+  ];
 
   if (isLoading) {
     return <div>Loading positions...</div>;
@@ -14,25 +47,25 @@ const Home: FC = () => {
 
   return (
     <div>
-      <h1>Home</h1>
-      <p>Welcome to the Position Book System</p>
-      <div>
-        <h2>Positions</h2>
-        {positions?.map((position) => (
-          <div key={`${position.Account}-${position.Security}`}>
-            <h3>Account: {position.Account}</h3>
-            <p>Security: {position.Security}</p>
-            <p>Quantity: {position.Quantity}</p>
-            <h4>Events:</h4>
-            <ul>
-              {position.Events.map((event) => (
-                <li key={event.ID}>
-                  {event.Action} - Quantity: {event.Quantity}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+      <h1>Position Book System</h1>
+      <div
+        className="ag-theme-salt-light"
+        style={{ height: 600, width: "100%" }}
+      >
+        <AgGridReact
+          {...defaultGridOptions}
+          rowData={positions}
+          columnDefs={columnDefs}
+          defaultColDef={{
+            flex: 1,
+            minWidth: 100,
+            resizable: true,
+          }}
+          animateRows={true}
+          enableCellTextSelection={true}
+          pagination={true}
+          paginationPageSize={10}
+        />
       </div>
     </div>
   );
