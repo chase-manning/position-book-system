@@ -6,7 +6,7 @@ import "@salt-ds/ag-grid-theme/salt-ag-theme.css";
 import type { ColDef, ICellRendererParams } from "ag-grid-community";
 import type { TradeEvent } from "../app/use-positions";
 import { defaultGridOptions } from "../app/ag-grid-config";
-import { Text } from "@salt-ds/core";
+import { Text, StackLayout, Panel, FlexLayout } from "@salt-ds/core";
 
 const Home: FC = () => {
   const { data: positions, isLoading, error } = usePositions();
@@ -47,28 +47,61 @@ const Home: FC = () => {
   }
 
   return (
-    <div>
-      <Text styleAs="h1">Position Book System</Text>
-      <div
-        className="ag-theme-salt-light"
-        style={{ height: 600, width: "100%" }}
+    <StackLayout
+      align="center"
+      gap={5}
+      style={{
+        minHeight: "100%",
+        width: "100%",
+        background: "var(--salt-container-primary-background)",
+      }}
+    >
+      <FlexLayout
+        direction="column"
+        align="center"
+        style={{
+          width: "100%",
+          maxWidth: 1200,
+          margin: "0 auto",
+          padding: "var(--salt-spacing-400) 0",
+        }}
       >
-        <AgGridReact
-          {...defaultGridOptions}
-          rowData={positions}
-          columnDefs={columnDefs}
-          defaultColDef={{
-            flex: 1,
-            minWidth: 100,
-            resizable: true,
+        <Text styleAs="h1" style={{ marginBottom: "var(--salt-spacing-300)" }}>
+          Position Book System
+        </Text>
+        <Panel
+          variant="primary"
+          style={{
+            width: "100%",
+            padding: "var(--salt-spacing-300)",
+            boxSizing: "border-box",
+            boxShadow: "var(--salt-overlayable-shadow-scroll)",
+            maxWidth: 1000,
+            margin: "0 auto",
           }}
-          animateRows={true}
-          enableCellTextSelection={true}
-          pagination={true}
-          paginationPageSize={10}
-        />
-      </div>
-    </div>
+        >
+          <div
+            className="ag-theme-salt-light"
+            style={{ height: 600, width: "100%" }}
+          >
+            <AgGridReact
+              {...defaultGridOptions}
+              rowData={positions}
+              columnDefs={columnDefs}
+              defaultColDef={{
+                flex: 1,
+                minWidth: 100,
+                resizable: true,
+              }}
+              animateRows={true}
+              enableCellTextSelection={true}
+              pagination={true}
+              paginationPageSize={10}
+            />
+          </div>
+        </Panel>
+      </FlexLayout>
+    </StackLayout>
   );
 };
 
