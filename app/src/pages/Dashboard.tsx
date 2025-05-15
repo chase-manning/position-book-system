@@ -19,27 +19,19 @@ import "@salt-ds/ag-grid-theme/salt-ag-theme.css";
 import type { ColDef } from "ag-grid-community";
 import { defaultGridOptions } from "../app/ag-grid-config";
 import { useNavigate } from "react-router-dom";
+import {
+  calculatePositionMetrics,
+  generatePositionSummary,
+} from "../utils/position-calculations";
 
 const Dashboard: FC = () => {
   const { data: positions, isLoading, error, refetch } = usePositions();
   const [activeTab, setActiveTab] = useState(0);
   const navigate = useNavigate();
 
-  // Calculate key metrics
-  const totalPositions = positions?.length || 0;
-  const totalQuantity =
-    positions?.reduce((sum, pos) => sum + pos.Quantity, 0) || 0;
-  const uniqueSecurities = new Set(positions?.map((pos) => pos.Security)).size;
-  const uniqueAccounts = new Set(positions?.map((pos) => pos.Account)).size;
-
-  // Prepare position summary data
-  const positionSummaryData =
-    positions?.map((pos) => ({
-      Account: pos.Account,
-      Security: pos.Security,
-      Quantity: pos.Quantity,
-      Events: pos.Events.length,
-    })) || [];
+  // Calculate metrics using utility functions
+  const metrics = calculatePositionMetrics(positions);
+  const positionSummaryData = generatePositionSummary(positions);
 
   const positionSummaryColumns: ColDef[] = [
     { field: "Account", headerName: "Account", sortable: true, filter: true },
@@ -154,25 +146,25 @@ const Dashboard: FC = () => {
             <Card>
               <StackLayout gap={1}>
                 <Text styleAs="h4">Total Positions</Text>
-                <Text styleAs="h2">{totalPositions}</Text>
+                <Text styleAs="h2">{metrics.totalPositions}</Text>
               </StackLayout>
             </Card>
             <Card>
               <StackLayout gap={1}>
                 <Text styleAs="h4">Total Quantity</Text>
-                <Text styleAs="h2">{totalQuantity}</Text>
+                <Text styleAs="h2">{metrics.totalQuantity}</Text>
               </StackLayout>
             </Card>
             <Card>
               <StackLayout gap={1}>
                 <Text styleAs="h4">Unique Securities</Text>
-                <Text styleAs="h2">{uniqueSecurities}</Text>
+                <Text styleAs="h2">{metrics.uniqueSecurities}</Text>
               </StackLayout>
             </Card>
             <Card>
               <StackLayout gap={1}>
                 <Text styleAs="h4">Unique Accounts</Text>
-                <Text styleAs="h2">{uniqueAccounts}</Text>
+                <Text styleAs="h2">{metrics.uniqueAccounts}</Text>
               </StackLayout>
             </Card>
           </FlowLayout>
