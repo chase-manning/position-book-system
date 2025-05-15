@@ -6,6 +6,7 @@ import "@salt-ds/ag-grid-theme/salt-ag-theme.css";
 import type { ColDef, ICellRendererParams } from "ag-grid-community";
 import type { TradeEvent } from "../app/use-positions";
 import { defaultGridOptions } from "../app/ag-grid-config";
+import { Text } from "@salt-ds/core";
 
 const Home: FC = () => {
   const { data: positions, isLoading, error } = usePositions();
@@ -47,7 +48,7 @@ const Home: FC = () => {
 
   return (
     <div>
-      <h1>Position Book System</h1>
+      <Text styleAs="h1">Position Book System</Text>
       <div
         className="ag-theme-salt-light"
         style={{ height: 600, width: "100%" }}
