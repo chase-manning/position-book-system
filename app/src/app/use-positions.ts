@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-interface TradeEvent {
+export interface TradeEvent {
   ID: string;
   Action: "BUY" | "SELL" | "CANCEL";
   Account: string;
