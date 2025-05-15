@@ -175,6 +175,7 @@ const Home: FC = () => {
               defaultColDef={{
                 flex: 1,
                 minWidth: 100,
+                resizable: false,
               }}
               animateRows={true}
               enableCellTextSelection={true}
