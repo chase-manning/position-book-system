@@ -1,8 +1,8 @@
 import {
   calculatePositionMetrics,
   generatePositionSummary,
-} from "../position-calculations";
-import type { Position } from "../../app/use-positions";
+} from "./position-calculations";
+import type { Position } from "../app/use-positions";
 
 describe("Position Calculations", () => {
   const mockPositions: Position[] = [
