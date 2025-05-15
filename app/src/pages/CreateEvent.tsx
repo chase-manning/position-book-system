@@ -14,6 +14,7 @@ import {
   FlowLayout,
 } from "@salt-ds/core";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import type { TradeEvent } from "../app/use-positions";
 import { usePositions } from "../app/use-positions";
 
@@ -25,6 +26,7 @@ interface ValidationState {
 
 const CreateEvent: FC = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<Omit<TradeEvent, "ID">>({
     Action: "BUY",
@@ -123,6 +125,8 @@ const CreateEvent: FC = () => {
         throw new Error("Failed to create event");
       }
 
+      // Invalidate and refetch positions data
+      await queryClient.invalidateQueries({ queryKey: ["positions"] });
       navigate("/");
     } catch (error) {
       console.error("Error creating event:", error);
