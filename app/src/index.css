@@ -32,3 +32,10 @@ input {
 a {
   text-decoration: none;
 }
+
+/* Vertically center AG Grid cell content for Salt DS theme */
+.ag-theme-salt-light .ag-cell {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
