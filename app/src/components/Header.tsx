@@ -27,6 +27,10 @@ const NAVIGATION_ITEMS: NavigationItemType[] = [
     label: "Create Event",
     route: "/create-event",
   },
+  {
+    label: "Dashboard",
+    route: "/dashboard",
+  },
 ];
 
 interface UtilityItemType {

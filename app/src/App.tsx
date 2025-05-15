@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Events from "./pages/Events";
 import CreateEvent from "./pages/CreateEvent";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
           >
             <Routes>
               <Route path="/" element={<Events />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/create-event" element={<CreateEvent />} />
             </Routes>
           </BorderItem>
