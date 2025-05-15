@@ -194,7 +194,7 @@ const Events: FC = () => {
         }}
       >
         <Text styleAs="h1" style={{ marginBottom: "var(--salt-spacing-300)" }}>
-          Position Book System
+          Trade Events
         </Text>
         <Panel
           variant="primary"
