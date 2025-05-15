@@ -75,8 +75,12 @@ const Events: FC = () => {
       cellRenderer: (params: ICellRendererParams) => {
         const event = params.data;
         const isLoading = deletingRow === event.ID;
-        // Only show Cancel for BUY/SELL events
+        // Only show Cancel for BUY/SELL events that haven't been cancelled
         if (event.Action !== "BUY" && event.Action !== "SELL") return null;
+        const hasCancelEvent = events.some(
+          (e) => e.Action === "CANCEL" && e.ID === event.ID
+        );
+        if (hasCancelEvent) return null;
         return (
           <Button
             disabled={isLoading}
