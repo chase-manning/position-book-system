@@ -105,6 +105,34 @@ const Dashboard: FC = () => {
     );
   }
 
+  if (!positions || positions.length === 0) {
+    return (
+      <StackLayout
+        align="center"
+        style={{
+          minHeight: "100vh",
+          width: "100%",
+          background: "var(--salt-container-primary-background)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <StackLayout gap={2} align="center">
+          <Text styleAs="h2">No Positions Found</Text>
+          <Text>Get started by creating your first trade event.</Text>
+          <Button
+            onClick={() => navigate("/create-event")}
+            variant="primary"
+            style={{ marginTop: "var(--salt-spacing-200)" }}
+          >
+            Create Event
+          </Button>
+        </StackLayout>
+      </StackLayout>
+    );
+  }
+
   return (
     <BorderLayout
       style={{
