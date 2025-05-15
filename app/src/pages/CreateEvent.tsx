@@ -176,18 +176,13 @@ const CreateEvent: FC = () => {
                   selected={[formData.Action]}
                   onSelectionChange={(_, values) => {
                     const value = values[0];
-                    if (
-                      value === "BUY" ||
-                      value === "SELL" ||
-                      value === "CANCEL"
-                    ) {
+                    if (value === "BUY" || value === "SELL") {
                       setFormData((prev) => ({ ...prev, Action: value }));
                     }
                   }}
                 >
                   <Option value="BUY">Buy</Option>
                   <Option value="SELL">Sell</Option>
-                  <Option value="CANCEL">Cancel</Option>
                 </Dropdown>
                 <FormFieldHelperText>
                   Select the type of trade action

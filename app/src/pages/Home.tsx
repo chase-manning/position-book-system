@@ -3,7 +3,6 @@ import { usePositions } from "../app/use-positions";
 import { AgGridReact } from "ag-grid-react";
 import "@salt-ds/ag-grid-theme/salt-ag-theme.css";
 import type { ColDef, ICellRendererParams } from "ag-grid-community";
-import type { TradeEvent } from "../app/use-positions";
 import { defaultGridOptions } from "../app/ag-grid-config";
 import {
   Text,
@@ -14,9 +13,38 @@ import {
   StatusIndicator,
   Button,
 } from "@salt-ds/core";
+import { useState } from "react";
 
 const Home: FC = () => {
   const { data: positions, isLoading, error, refetch } = usePositions();
+  const [deletingRow, setDeletingRow] = useState<string | null>(null);
+
+  const handleDelete = async (account: string, security: string) => {
+    setDeletingRow(account + security);
+    try {
+      // Assuming backend expects a CANCEL event for deletion
+      await fetch("http://localhost:8080/api/trades", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          Events: [
+            {
+              ID: Date.now().toString(),
+              Action: "CANCEL",
+              Account: account,
+              Security: security,
+              Quantity: 0,
+            },
+          ],
+        }),
+      });
+      await refetch();
+    } catch {
+      // Optionally show error
+    } finally {
+      setDeletingRow(null);
+    }
+  };
 
   const columnDefs: ColDef[] = [
     { field: "Account", headerName: "Account", sortable: true, filter: true },
@@ -29,25 +57,31 @@ const Home: FC = () => {
       cellClass: ["numeric-cell"],
     },
     {
-      field: "Events",
-      headerName: "Events",
-      valueFormatter: (params) => {
-        if (!params.value) return "";
-        return params.value
-          .map((event: TradeEvent) => `${event.Action} - ${event.Quantity}`)
-          .join(", ");
-      },
-      cellRenderer: (params: ICellRendererParams<TradeEvent[]>) => {
+      headerName: "Actions",
+      field: "actions",
+      cellRenderer: (params: ICellRendererParams) => {
+        const { Account, Security } = params.data;
+        const isLoading = deletingRow === Account + Security;
         return (
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {params.value?.map((event: TradeEvent) => (
-              <li key={event.ID}>
-                {event.Action} - {event.Quantity}
-              </li>
-            ))}
-          </ul>
+          <Button
+            disabled={isLoading}
+            onClick={() => handleDelete(Account, Security)}
+            style={{ minWidth: 80 }}
+            sentiment="neutral"
+            aria-label={isLoading ? "Cancelling" : "Cancel"}
+          >
+            {isLoading ? (
+              <Spinner size="small" aria-label="Cancelling" />
+            ) : (
+              "Cancel"
+            )}
+          </Button>
         );
       },
+      width: 120,
+      pinned: "right",
+      sortable: false,
+      filter: false,
     },
   ];
 
@@ -141,7 +175,6 @@ const Home: FC = () => {
               defaultColDef={{
                 flex: 1,
                 minWidth: 100,
-                resizable: true,
               }}
               animateRows={true}
               enableCellTextSelection={true}
