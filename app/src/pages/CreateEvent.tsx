@@ -169,6 +169,7 @@ const CreateEvent: FC = () => {
                 <FormFieldLabel>Action</FormFieldLabel>
                 <Dropdown
                   value={formData.Action}
+                  selected={[formData.Action]}
                   onSelectionChange={(_, values) => {
                     const value = values[0];
                     if (
