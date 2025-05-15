@@ -180,6 +180,7 @@ const CreateEvent: FC = () => {
                       setFormData((prev) => ({ ...prev, Action: value }));
                     }
                   }}
+                  aria-label="Action"
                 >
                   <Option value="BUY">Buy</Option>
                   <Option value="SELL">Sell</Option>

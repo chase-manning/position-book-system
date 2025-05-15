@@ -10,6 +10,9 @@ export default {
   transform: {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
-  testMatch: ["**/__tests__/**/*.test.(ts|tsx)"],
+  testMatch: [
+    "**/__tests__/**/*.test.(ts|tsx)",
+    "**/?(*.)+(spec|test).(ts|tsx)",
+  ],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
 };
