@@ -24,6 +24,12 @@ const Home: FC = () => {
     {
       field: "Events",
       headerName: "Events",
+      valueFormatter: (params) => {
+        if (!params.value) return "";
+        return params.value
+          .map((event: TradeEvent) => `${event.Action} - ${event.Quantity}`)
+          .join(", ");
+      },
       cellRenderer: (params: ICellRendererParams<TradeEvent[]>) => {
         return (
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
