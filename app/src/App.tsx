@@ -1,23 +1,41 @@
-import { SaltProvider } from "@salt-ds/core";
-import { Button, Banner, BannerContent, BannerActions } from "@salt-ds/core";
-
+import { BorderItem, BorderLayout, SaltProvider } from "@salt-ds/core";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "@salt-ds/theme/index.css";
+import Header from "./components/Header";
+import Home from "./pages/Home";
+import About from "./pages/About";
 
 const App = () => {
   return (
     <SaltProvider>
-      <div>Hello World</div>
-      <Button appearance="solid" sentiment="accented">
-        Click me
-      </Button>
-      <Banner>
-        <BannerContent>
-          <p>Hello World</p>
-        </BannerContent>
-        <BannerActions>
-          <Button>Click me</Button>
-        </BannerActions>
-      </Banner>
+      <Router>
+        <Header />
+        <BorderLayout>
+          <BorderItem
+            style={{
+              marginTop:
+                "calc(var(--salt-size-base) + var(--salt-spacing-200))",
+            }}
+            position="center"
+          >
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+            </Routes>
+          </BorderItem>
+          <BorderItem position="south">
+            <div
+              style={{
+                padding: "var(--salt-spacing-200)",
+                margin: "var(--salt-spacing-200)",
+                backgroundColor: "var(--salt-color-gray-10)",
+              }}
+            >
+              <span>Footer</span>
+            </div>
+          </BorderItem>
+        </BorderLayout>
+      </Router>
     </SaltProvider>
   );
 };
