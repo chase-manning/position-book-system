@@ -20,7 +20,7 @@ interface NavigationItemType {
 
 const NAVIGATION_ITEMS: NavigationItemType[] = [
   {
-    label: "Position Summary",
+    label: "Events",
     route: "/",
   },
   {

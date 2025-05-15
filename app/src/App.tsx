@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "@salt-ds/theme/index.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import Home from "./pages/Home";
+import Events from "./pages/Events";
 import CreateEvent from "./pages/CreateEvent";
 
 const App = () => {
@@ -27,7 +27,7 @@ const App = () => {
             position="center"
           >
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Events />} />
               <Route path="/create-event" element={<CreateEvent />} />
             </Routes>
           </BorderItem>

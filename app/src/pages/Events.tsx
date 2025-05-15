@@ -15,7 +15,7 @@ import {
 } from "@salt-ds/core";
 import { useState } from "react";
 
-const Home: FC = () => {
+const Events: FC = () => {
   const { data: positions, isLoading, error, refetch } = usePositions();
   const [deletingRow, setDeletingRow] = useState<string | null>(null);
 
@@ -189,4 +189,4 @@ const Home: FC = () => {
   );
 };
 
-export default Home;
+export default Events;
