@@ -1,7 +1,6 @@
 import type { FC } from "react";
 import { usePositions } from "../app/use-positions";
 import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
 import "@salt-ds/ag-grid-theme/salt-ag-theme.css";
 import type { ColDef, ICellRendererParams } from "ag-grid-community";
 import type { TradeEvent } from "../app/use-positions";
