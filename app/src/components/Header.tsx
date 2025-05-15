@@ -24,8 +24,8 @@ const NAVIGATION_ITEMS: NavigationItemType[] = [
     route: "/",
   },
   {
-    label: "About",
-    route: "/about",
+    label: "Create Event",
+    route: "/create-event",
   },
 ];
 
