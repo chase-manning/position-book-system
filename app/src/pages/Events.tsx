@@ -14,25 +14,36 @@ import {
   Button,
 } from "@salt-ds/core";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import type { TradeEvent } from "../app/use-positions";
 
 const Events: FC = () => {
   const { data: positions, isLoading, error, refetch } = usePositions();
   const [deletingRow, setDeletingRow] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const handleDelete = async (account: string, security: string) => {
-    setDeletingRow(account + security);
+  // Flatten all events from all positions into a single array
+  const events = positions
+    ? positions.flatMap((pos) =>
+        pos.Events.map((event) => ({
+          ...event,
+        }))
+      )
+    : [];
+
+  const handleDelete = async (event: TradeEvent) => {
+    setDeletingRow(event.ID);
     try {
-      // Assuming backend expects a CANCEL event for deletion
       await fetch("http://localhost:8080/api/trades", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           Events: [
             {
-              ID: Date.now().toString(),
+              ID: event.ID,
               Action: "CANCEL",
-              Account: account,
-              Security: security,
+              Account: event.Account,
+              Security: event.Security,
               Quantity: 0,
             },
           ],
@@ -47,6 +58,7 @@ const Events: FC = () => {
   };
 
   const columnDefs: ColDef[] = [
+    { field: "ID", headerName: "ID", sortable: true, filter: true },
     { field: "Account", headerName: "Account", sortable: true, filter: true },
     { field: "Security", headerName: "Security", sortable: true, filter: true },
     {
@@ -56,16 +68,19 @@ const Events: FC = () => {
       filter: true,
       cellClass: ["numeric-cell"],
     },
+    { field: "Action", headerName: "Action", sortable: true, filter: true },
     {
       headerName: "Actions",
       field: "actions",
       cellRenderer: (params: ICellRendererParams) => {
-        const { Account, Security } = params.data;
-        const isLoading = deletingRow === Account + Security;
+        const event = params.data;
+        const isLoading = deletingRow === event.ID;
+        // Only show Cancel for BUY/SELL events
+        if (event.Action !== "BUY" && event.Action !== "SELL") return null;
         return (
           <Button
             disabled={isLoading}
-            onClick={() => handleDelete(Account, Security)}
+            onClick={() => handleDelete(event)}
             style={{ minWidth: 80 }}
             sentiment="neutral"
             aria-label={isLoading ? "Cancelling" : "Cancel"}
@@ -130,6 +145,34 @@ const Events: FC = () => {
     );
   }
 
+  if (!events || events.length === 0) {
+    return (
+      <StackLayout
+        align="center"
+        style={{
+          minHeight: "100vh",
+          width: "100%",
+          background: "var(--salt-container-primary-background)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <StackLayout gap={2} align="center">
+          <Text styleAs="h2">No Events Found</Text>
+          <Text>Get started by creating your first trade event.</Text>
+          <Button
+            onClick={() => navigate("/create-event")}
+            variant="primary"
+            style={{ marginTop: "var(--salt-spacing-200)" }}
+          >
+            Create Event
+          </Button>
+        </StackLayout>
+      </StackLayout>
+    );
+  }
+
   return (
     <StackLayout
       align="center"
@@ -170,7 +213,7 @@ const Events: FC = () => {
           >
             <AgGridReact
               {...defaultGridOptions}
-              rowData={positions}
+              rowData={events}
               columnDefs={columnDefs}
               defaultColDef={{
                 flex: 1,
