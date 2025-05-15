@@ -8,7 +8,7 @@ export interface TradeEvent {
   Quantity: number;
 }
 
-interface Position {
+export interface Position {
   Account: string;
   Security: string;
   Quantity: number;
